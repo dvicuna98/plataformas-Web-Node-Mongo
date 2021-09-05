@@ -1,5 +1,5 @@
-import User from "../models/User";
-import Role from "../models/Role";
+import User from "../models/user";
+import Role from "../models/role";
 
 export const createUser = async (req, res) => {
   try {
@@ -7,7 +7,6 @@ export const createUser = async (req, res) => {
 
     const rolesFound = await Role.find({ name: { $in: roles } });
 
-    // creating a new User
     const user = new User({
       username,
       email,
@@ -15,10 +14,8 @@ export const createUser = async (req, res) => {
       roles: rolesFound.map((role) => role._id),
     });
 
-    // encrypting password
     user.password = await User.encryptPassword(user.password);
 
-    // saving the new user
     const savedUser = await user.save();
 
     return res.status(200).json({
